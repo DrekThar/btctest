@@ -4,7 +4,7 @@
 namespace App\Components\WebServices;
 
 
-use App\Components\ApiParser;
+use App\Components\ApiHelper;
 
 class CoingeckoService extends WebService
 {
@@ -16,17 +16,14 @@ class CoingeckoService extends WebService
     private $currencyCache = [];
 
     /**
-     * Получает курс одной валюты относительно другой
-     * @param string $from
-     * @param string $to
-     * @return float
+     * @inheritDoc
      */
     public function getCourse($from, $to)
     {
 
         // Записываю в кэш, т.к. сервис отдаёт большой массив данных по многим валютам
         if (!array_key_exists($to, $this->currencyCache)) {
-            $parser = new ApiParser($this->baseUri);
+            $parser = new ApiHelper($this->baseUri);
             $this->currencyCache[$to] = $parser->get($this->getCourseUri . strtolower($to));
         }
 

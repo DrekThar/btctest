@@ -4,7 +4,7 @@
 namespace App\Components\WebServices;
 
 
-use App\Components\ApiParser;
+use App\Components\ApiHelper;
 
 class CrexService extends WebService
 {
@@ -13,9 +13,12 @@ class CrexService extends WebService
     private $baseUri = 'https://api.crex24.com/';
     private $getCourseUri = '/v2/public/tickers?instrument=';
 
+    /**
+     * @inheritDoc
+     */
     public function getCourse($from, $to)
     {
-        $parser = new ApiParser($this->baseUri);
+        $parser = new ApiHelper($this->baseUri);
         $data = $parser->get($this->getCourseUri . "{$from}-{$to}");
 
         $currencyInfo = $data[0];
