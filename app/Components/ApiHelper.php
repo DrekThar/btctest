@@ -5,6 +5,7 @@ namespace App\Components;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Response;
 
 /**
@@ -15,12 +16,12 @@ class ApiHelper
 {
     protected $client;
 
-    public function __construct($baseUrl)
+    public function __construct($baseUrl, $params = [])
     {
-        $this->client = new Client([
+        $this->client = new Client(array_merge([
             'headers' => ['Content-Type' => 'application/json'],
             'base_uri' => $baseUrl
-        ]);
+        ], $params));
     }
 
     /**
@@ -32,6 +33,29 @@ class ApiHelper
     public function get($uri)
     {
         $response = $this->client->get($uri)->getBody()->getContents();
+        return json_decode($response, true);
+    }
+
+    /**
+     * @param string $uri
+     * @param string $method
+     * @param integer $id
+     * @param array $params
+     * @return array
+     * @throws GuzzleException
+     */
+    public function post($uri, $method, $id, $params = [])
+    {
+        $response = $this->client
+            ->post($uri, [
+                RequestOptions::JSON => [
+                    'jsonrpc' => '1.0',
+                    'id' => $id,
+                    'method' => $method,
+                    'params' => $params
+                ]
+            ])->getBody()->getContents();
+
         return json_decode($response, true);
     }
 
